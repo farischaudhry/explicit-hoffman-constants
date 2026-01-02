@@ -1,7 +1,8 @@
 import numpy as np
-from scipy.linalg import toeplitz, dct
+from scipy.linalg import toeplitz
+from scipy.fftpack import dct
 
-from hoffman.designs import DesignMatrix, normalize_cols
+from hoffman.designs.design_matrix import DesignMatrix, normalize_cols
 
 
 class DesignFactory:
@@ -166,3 +167,20 @@ class DesignFactory:
         # Require s <= rank for model identifiability; we do not enforce this
         beta, support = DesignFactory.create_sparse_beta(d, s)
         return DesignMatrix(A, beta, support, f'Low-Rank (rank={rank})')
+
+    @staticmethod
+    def spiked(n: int, d: int, s: int, rho: float = 0.95) -> DesignMatrix:
+        """
+        Spiked Covariance Model (Global Multicollinearity).
+        
+        Properties:
+        - Geometry: Features lie in a narrow cone around a shared latent factor.
+        - Hoffman: H scales with sqrt(d) due to high interaction block leakage.
+        - RE: Holds with kappa = 1 - rho, but conditioning is poor.
+        """
+        z = np.random.normal(0, 1, (n, 1))
+        U = np.random.normal(0, 1, (n, d))
+        A = np.sqrt(rho) * z + np.sqrt(1 - rho) * U
+        A = normalize_cols(A, np.sqrt(n))
+        beta, support = DesignFactory.create_sparse_beta(d, s)
+        return DesignMatrix(A, beta, support, f'Spiked (rho={rho})')

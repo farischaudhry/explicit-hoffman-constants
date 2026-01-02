@@ -11,8 +11,8 @@ class LassoSolver(BaseSparseSolver):
     
     Implements the geometric logic shared by all LASSO algorithms.
     """
-    def __init__(self, design, lam: float, y: np.ndarray = None):
-        super().__init__(design, {'l1': lam}, y=y)
+    def __init__(self, design, lam: float, y: np.ndarray = None, beta_hat: np.ndarray = None):
+        super().__init__(design, {'l1': lam}, y=y, beta_hat=beta_hat)
         self.lam = lam
 
     def objective(self, beta: np.ndarray) -> float:
@@ -25,7 +25,7 @@ class LassoSolver(BaseSparseSolver):
         """Indices where beta_j is non-zero."""
         return set(np.where(np.abs(beta) > tol)[0])
 
-    def _compute_geometric_metrics(self, beta: np.ndarray) -> tuple[float, float, float]:
+    def _compute_geometric_metrics(self, beta: np.ndarray) -> dict[str, any]:
         """
         Computes (kappa, interaction, dual_violation).
         - kappa: lambda_min of the active Gram block.
@@ -56,15 +56,28 @@ class LassoSolver(BaseSparseSolver):
             # Normalised by lambda to check the [-1, 1] boundary
             dual_violation = np.max(np.abs(grad_full[inactive_idx])) / self.lam
             
-        return min_eig, interaction, dual_violation
-
+        cone_ratio = 0.0
+        if self.beta_hat is not None:
+            delta = beta - self.beta_hat
+            err_active = np.linalg.norm(delta[self.hat_support], 1)
+            err_inactive = np.linalg.norm(delta[~self.hat_support], 1)
+            # Threshold to avoid division by zero
+            cone_ratio = err_inactive / err_active if err_active > 1e-12 else 0.0
+            
+        return {
+            'min_eig': min_eig,
+            'interaction': interaction,
+            'dual_violation': dual_violation,
+            'cone_ratio': cone_ratio
+        }   
+    
 
 class ISTALassoSolver(LassoSolver):
     """
     Iterative Shrinkage-Thresholding Algorithm (ISTA) for LASSO.
     """
-    def solve(self, n_iters: int) -> SolverProgress:
-        beta = np.zeros(self.design.d)
+    def solve(self, n_iters: int, start_beta: np.ndarray = None) -> SolverProgress:
+        beta = np.zeros(self.design.d) if start_beta is None else start_beta.copy()
         # Lipschitz constant of the gradient of (1/2n)||y-Ab||^2 is lambda_max(G)
         L = np.linalg.norm(self.design.A, ord=2)**2 / self.design.n
         step = 1.0 / L
@@ -73,7 +86,7 @@ class ISTALassoSolver(LassoSolver):
 
         for k in range(n_iters):
             # Compute current metrics BEFORE the update
-            eig, inter, dual = self._compute_geometric_metrics(beta)
+            metrics_dict = self._compute_geometric_metrics(beta)
             
             # Gradient step on f(beta)
             grad = (1/self.design.n) * self.design.A.T @ (self.design.A @ beta - self.y)
@@ -92,9 +105,7 @@ class ISTALassoSolver(LassoSolver):
                 beta=beta.copy(),
                 residual=residual,
                 active_constraints=self._get_active_set(beta),
-                min_eig=eig,
-                interaction=inter,
-                dual_violation=dual
+                **metrics_dict
             ))
             
             beta = beta_next
@@ -107,8 +118,8 @@ class FISTALassoSolver(LassoSolver):
     Fast Iterative Shrinkage-Thresholding Algorithm (FISTA) for LASSO.
     Includes Nesterov acceleration (momentum).
     """
-    def solve(self, n_iters: int) -> SolverProgress:
-        beta = np.zeros(self.design.d)
+    def solve(self, n_iters: int, start_beta: np.ndarray = None) -> SolverProgress:
+        beta = np.zeros(self.design.d) if start_beta is None else start_beta.copy()
         beta_prev = np.zeros(self.design.d)
         
         # Lipschitz constant calculation
@@ -120,7 +131,7 @@ class FISTALassoSolver(LassoSolver):
 
         for k in range(n_iters):
             # Geometry Introspection (on the actual iterate beta)
-            eig, inter, dual = self._compute_geometric_metrics(beta)
+            metrics_dict = self._compute_geometric_metrics(beta)
             
             # Nesterov Momentum Step
             # y_k is the search point incorporating momentum
@@ -143,9 +154,7 @@ class FISTALassoSolver(LassoSolver):
                 beta=beta.copy(),
                 residual=residual,
                 active_constraints=self._get_active_set(beta),
-                min_eig=eig,
-                interaction=inter,
-                dual_violation=dual
+                **metrics_dict
             ))
             
             # Update for next iteration

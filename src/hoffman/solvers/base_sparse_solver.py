@@ -18,13 +18,13 @@ class ManifoldMetrics:
     
     # Structural Manifold Info
     # For LASSO: set[int] (non-zero indices)
-    # For Fused: list[set[int]] (partition of fused nodes)
     active_constraints: any 
     
     # Hoffman-Relevant Geometry
     min_eig: float  # Curvature of f restricted to the manifold
     interaction: float  # Leakage to inactive constraints (||G_AcA||)
     dual_violation: float  # Margin to subdifferential boundary (max |s_Ac|)
+    cone_ratio: float = 0.0  # Ratio of solution to restricted cone (||D_Ac|| / ||D_A||)
     
     @property
     def is_stable(self) -> bool:
@@ -64,11 +64,15 @@ class BaseSparseSolver(ABC):
     - Adaptive LASSO (weights in g=l1)
     - Graph Fused Lasso (K=Incidence, g=l1)
     """
-    def __init__(self, design: DesignMatrix, lambdas: dict[str, float], y: np.ndarray = None):
+    def __init__(self, design: DesignMatrix, lambdas: dict[str, float], y: np.ndarray = None, beta_hat: np.ndarray = None):
         self.design = design
         self.lambdas = lambdas
         self.y = y if y is not None else (design.A @ design.true_beta)
         self.G = design.gram
+        # Reference solution for analysis
+        self.beta_hat = beta_hat 
+        self.hat_support = np.abs(beta_hat) > 1e-9 if beta_hat is not None else None
+
 
     @abstractmethod
     def objective(self, beta: np.ndarray) -> float:
@@ -81,8 +85,8 @@ class BaseSparseSolver(ABC):
         pass
 
     @abstractmethod
-    def _compute_geometric_metrics(self, beta: np.ndarray) -> tuple[float, float, float]:
-        """Returns the Hoffman-relevant components: (eigenvalues, interaction, dual margin)."""
+    def _compute_geometric_metrics(self, beta: np.ndarray) -> dict[str, any]:
+        """Returns a dictionary of Hoffman-relevant geometric metrics."""
         pass
 
     @abstractmethod

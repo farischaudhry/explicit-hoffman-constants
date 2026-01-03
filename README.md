@@ -19,13 +19,13 @@ explicit-hoffman-constants/
 │   └── hoffman/
 │       ├── __init__.py
 │       ├── designs/              # Design matrix generators
-│       │   ├── __init__.py
 │       │   ├── design_matrix.py  # DesignMatrix dataclass
 │       │   └── design_factory.py # Factory for various designs
 │       ├── solvers/              # Sparse problem solvers
-│       │   ├── __init__.py
 │       │   ├── base_sparse_solver.py  # Abstract base solver
 │       │   └── lasso_solver.py        # Solvers for LASSO
+│       ├── bounds/               # Hoffman constant bounds
+│       │   ├── hoffman_bounds.py  # Singular value bounding techniques 
 │       ├── utils/                
 │       │   ├── __init__.py
 │       │   ├── math_ops.py       # Mathematical operations

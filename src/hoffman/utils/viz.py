@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def set_publication_style():
+def set_plotting_style():
     """Sets up standard plotting style."""
     plt.rcParams.update({
         'text.usetex': False,
@@ -10,7 +10,7 @@ def set_publication_style():
         'axes.titlesize': 16,
         'xtick.labelsize': 11,
         'ytick.labelsize': 11,
-        'legend.fontsize': 10,
+        'legend.fontsize': 11,
         'figure.figsize': (10, 7),
         'axes.grid': True,
         'grid.alpha': 0.3,

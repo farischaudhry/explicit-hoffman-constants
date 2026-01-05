@@ -35,7 +35,6 @@ class DesignFactory:
         beta, support = DesignFactory.create_sparse_beta(d, s)
         return DesignMatrix(A, beta, support, f'Diagonal (min_var={min_var})')
 
-
     @staticmethod
     def orthonormal(n: int, d: int, s: int) -> DesignMatrix:
         """
@@ -106,6 +105,43 @@ class DesignFactory:
         A = normalize_cols(A_raw, np.sqrt(n))
         beta, support = DesignFactory.create_sparse_beta(d, s)
         return DesignMatrix(A, beta, support, f'Strict-Toeplitz (rho={rho})')
+    
+    @staticmethod
+    def block_diagonal_ar1(n: int, d: int, s: int, block_size: int = 10, rho: float = 0.9) -> DesignMatrix:
+        """
+        Generates a block-diagonal design matrix.
+        Features are correlated within blocks via an AR(1) structure  but are independent between blocks.
+        
+        Properties:
+        - Local Correlation: Captures intra-block structures in features.
+        - Hoffman: H is sensitive to whether the support A is spread across blocks or clustered within a single block.
+        """
+        # Ensure block_size is not larger than d
+        block_size = min(block_size, d)
+        n_blocks = int(np.ceil(d / block_size))
+        
+        # Sigma_ij = rho^|i-j|
+        coords = np.arange(block_size)
+        block_sigma = rho ** np.abs(coords[:, None] - coords[None, :])
+        block_sigma += 1e-12 * np.eye(block_size) # Stability jitter
+        L_block = np.linalg.cholesky(block_sigma)
+        
+        # Populate the design matrix block by block
+        A_raw = np.zeros((n, d))
+        for i in range(n_blocks):
+            start_col = i * block_size
+            end_col = min((i + 1) * block_size, d)
+            current_w = end_col - start_col
+            
+            # Generate independent noise and project into the block's correlation structure
+            Z = np.random.normal(0, 1, (n, current_w))
+            # Slice L_block in case the last block is smaller than block_size
+            A_raw[:, start_col:end_col] = Z @ L_block[:current_w, :current_w].T
+            
+        # Normalize columns
+        A = normalize_cols(A_raw, np.sqrt(n))
+        beta, support = DesignFactory.create_sparse_beta(d, s)
+        return DesignMatrix(A, beta, support, f'Block-Diagonal (size={block_size}, rho={rho})')
 
     @staticmethod
     def partial_dct(n: int, d: int, s: int) -> DesignMatrix:
@@ -113,6 +149,7 @@ class DesignFactory:
         Randomly sampled rows from a Discrete Cosine Transform basis.
         
         Properties:
+        - RIP: Satisfies RIP with high probability for n >= s log^4(d).
         - Coherence: Low mutual coherence.
         - High-Dim: Standard compressed sensing benchmark.
         """
@@ -123,6 +160,59 @@ class DesignFactory:
         
         beta, support = DesignFactory.create_sparse_beta(d, s)
         return DesignMatrix(A, beta, support, 'Partial DCT')
+    
+    @staticmethod
+    def rademacher(n: int, d: int, s: int) -> DesignMatrix:
+        """
+        Rademacher Ensemble (binary +1/-1 entries).
+        
+        Properties:
+        - RIP: Satisfies RIP similar to Gaussian.
+        - Incoherence: Bounded coherence like Gaussian.
+        """
+        X = np.random.choice([-1, 1], size=(n, d))
+        A = normalize_cols(X, np.sqrt(n))
+        beta, support = DesignFactory.create_sparse_beta(d, s)
+        return DesignMatrix(A, beta, support, 'Rademacher')
+    
+    @staticmethod
+    def uniform_subgaussian(n: int, d: int, s: int) -> DesignMatrix:
+        """
+        Uniform distribution on [-sqrt(3), sqrt(3)] (subgaussian with variance 1).
+        
+        Properties:
+        - RIP: Satisfies RIP similar to Gaussian.
+        - Bounded: All entries bounded (unlike Gaussian tails).
+        - Subgaussian: Tails decay exponentially.
+        """
+        X = np.random.uniform(-np.sqrt(3), np.sqrt(3), size=(n, d))
+        A = normalize_cols(X, np.sqrt(n))
+        beta, support = DesignFactory.create_sparse_beta(d, s)
+        return DesignMatrix(A, beta, support, 'Uniform Subgaussian')
+    
+    @staticmethod
+    def sparse_binary(n: int, d: int, s: int, sparsity: int = 3) -> DesignMatrix:
+        """
+        Sparse binary matrix with exactly 'sparsity' non-zero (+1/-1) entries per column.
+        
+        Properties:
+        - Sparse: Only k non-zeros per column.
+        - RIP: Satisfies RIP for appropriate k (typically k ~ log d).
+        - Memory: Very efficient storage and computation.
+        """
+        if sparsity > n:
+            sparsity = n
+        
+        X = np.zeros((n, d))
+        for j in range(d):
+            # Select k random rows for this column
+            row_indices = np.random.choice(n, sparsity, replace=False)
+            # Assign random +1/-1 values
+            X[row_indices, j] = np.random.choice([-1, 1], size=sparsity)
+        
+        A = normalize_cols(X, np.sqrt(n))
+        beta, support = DesignFactory.create_sparse_beta(d, s)
+        return DesignMatrix(A, beta, support, f'Sparse Binary (k={sparsity})')
     
     @staticmethod
     def power_law(n: int, d: int, s: int, decay: float = 1.5) -> DesignMatrix:

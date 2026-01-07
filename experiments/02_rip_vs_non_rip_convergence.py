@@ -1,5 +1,5 @@
 """
-Experiment 2: RIP Design Matrix vs. Convergence Rate
+Experiment 2: RIP vs. Non-RIP Design Convergence Rate
 ----------------------------------------------------------
 
 Previous work has shown that RIP condition is sufficent

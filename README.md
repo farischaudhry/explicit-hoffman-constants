@@ -25,9 +25,9 @@ explicit-hoffman-constants/
 │       │   ├── base_sparse_solver.py  # Abstract base solver
 │       │   └── lasso_solver.py        # Solvers for LASSO
 │       ├── bounds/               # Hoffman constant bounds
-│       │   ├── hoffman_bounds.py  # Singular value bounding techniques 
+│       │   ├── hoffman_bounds.py        # Singular value bounding techniques 
+|       |   └── sensitivity_analysis.py  # Perturbion tests to measure solution sensitivity
 │       ├── utils/                
-│       │   ├── __init__.py
 │       │   ├── math_ops.py       # Mathematical operations
 │       │   └── viz.py            # Plotting Config
 ├── experiments/                  # Experiment scripts  

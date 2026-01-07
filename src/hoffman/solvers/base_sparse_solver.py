@@ -24,6 +24,7 @@ class ManifoldMetrics:
     min_eig: float  # Curvature of f restricted to the manifold
     interaction: float  # Leakage to inactive constraints (||G_AcA||)
     dual_violation: float  # Margin to subdifferential boundary (max |s_Ac|)
+    current_active_set_size: int  # Size of active set at this iteration (|A|)
     cone_ratio: float = 0.0  # Ratio of solution to restricted cone (||D_Ac|| / ||D_A||)
     
     @property

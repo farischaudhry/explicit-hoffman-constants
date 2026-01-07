@@ -68,7 +68,8 @@ class LassoSolver(BaseSparseSolver):
             'min_eig': min_eig,
             'interaction': interaction,
             'dual_violation': dual_violation,
-            'cone_ratio': cone_ratio
+            'cone_ratio': cone_ratio,
+            'current_active_set_size': len(active_idx)
         }   
     
 

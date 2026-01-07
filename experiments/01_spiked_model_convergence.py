@@ -31,8 +31,12 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 # Configuration
 np.random.seed(0)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(message)s',
+    handlers=[logging.StreamHandler()]
+)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 set_plotting_style()
 
 # Experiment parameters

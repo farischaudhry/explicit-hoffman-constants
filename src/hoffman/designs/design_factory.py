@@ -41,7 +41,7 @@ class DesignFactory:
         Generates a perfectly orthonormal design matrix (requires n >= d).
         
         Properties:
-        - RIP: delta = 0 (perfect isometry).
+        - Geometry: G = I. Perfectly conditioned.
         - Hoffman: H = 1 / min(1, lambda). Best possible stability.
         """
         if n < d:

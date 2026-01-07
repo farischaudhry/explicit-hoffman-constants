@@ -93,7 +93,7 @@ for i, rho in enumerate(rhos):
     )
 
 plt.title(r'LASSO Convergence: $F(\beta^{(k)}) - F^*$ on Spiked Model Designs')
-plt.xlabel('Iteration, $k$')
+plt.xlabel('Iteration $k$')
 plt.ylabel('Estimator Suboptimality')
 plt.grid(True, which='both', alpha=0.3)
 plt.legend(bbox_to_anchor=(1, 1), loc='upper left')

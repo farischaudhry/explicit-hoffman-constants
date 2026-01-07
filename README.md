@@ -36,4 +36,22 @@ explicit-hoffman-constants/
 
 ## Experiments
 
-TODO
+### 01: Spiked Model Convergence
+
+Demonstrates that RE alone is insufficient to guarantee fast convergence. Tests the spiked covariance model with varying correlation $\rho \in [0, 0.95]$, showing that convergence can be made arbitrarily slow as $\rho \to 1$ even when RE conditions hold.
+
+### 02: RIP vs Non-RIP Convergence
+
+Empirical comparison of ISTA convergence rates across RIP designs (e.g., Gaussian, Rademacher) and non-RIP designs (e.g., Spiked, AR1).
+
+Demonstrates that RIP designs tend to have fast convergence, while non-RIP designs do not.
+
+### 03: ISTA Trajectory Cone Containment
+
+Investigates whether ISTA iterates stay within the restricted cone $\mathcal{C}_{\alpha}(\hat{\mathcal{A}})$ tracking:
+
+- Cone ratio: $\| \Delta_{\hat{\mathcal{A}}^c} \|_1 / \Delta_{\hat{\mathcal{A}}} \|_1$ over iterations.
+- Active set cardinality evolution and Jaccard similarity with true support.
+- Manifold identification times (first iteration when $\text{supp}(\beta^{(k)}) = \hat{\mathcal{A}}$).
+
+Tests both RIP and Non-RIP designs to validate that cone-conditional Hoffman bounds are practically relevant.

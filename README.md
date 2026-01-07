@@ -23,10 +23,10 @@ explicit-hoffman-constants/
 │       │   └── design_factory.py # Factory for various designs
 │       ├── solvers/              # Sparse problem solvers
 │       │   ├── base_sparse_solver.py  # Abstract base solver
-│       │   └── lasso_solver.py        # Solvers for LASSO
+│       │   └── lasso_solver.py        # Solvers for LASSO (e.g., ISTA/FISTA)
 │       ├── bounds/               # Hoffman constant bounds
 │       │   ├── hoffman_bounds.py        # Singular value bounding techniques 
-|       |   └── sensitivity_analysis.py  # Perturbion tests to measure solution sensitivity
+|       |   └── sensitivity_analysis.py  # Perturbation tests to measure solution sensitivity
 │       ├── utils/                
 │       │   ├── math_ops.py       # Mathematical operations
 │       │   └── viz.py            # Plotting Config

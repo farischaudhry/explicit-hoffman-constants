@@ -191,15 +191,15 @@ class DesignFactory:
         return DesignMatrix(A, beta, support, 'Uniform Subgaussian')
     
     @staticmethod
-    def sparse_binary(n: int, d: int, s: int, sparsity: int = 3) -> DesignMatrix:
+    def sparse_binary(n: int, d: int, s: int, density: float = 0.1) -> DesignMatrix:
         """
-        Sparse binary matrix with exactly 'sparsity' non-zero (+1/-1) entries per column.
+        Sparse binary matrix with approximately 'sparsity = density * n' nonzero (+1/-1) entries per column.
         
         Properties:
-        - Sparse: Only k non-zeros per column.
+        - Sparse: Only density% entries nonzero per column.
         - RIP: Satisfies RIP for appropriate k (typically k ~ log d).
-        - Memory: Very efficient storage and computation.
         """
+        sparsity = int(density * n)
         if sparsity > n:
             sparsity = n
         

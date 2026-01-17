@@ -1,0 +1,122 @@
+================================================================================
+Hoffman Stability Bound Validation
+================================================================================
+
+================================================================================
+Part 1: Controlled Noise Validation
+================================================================================
+
+Gaussian RIP:
+  n=200, d=400, s=15, lambda=0.1
+  Active set size (estimator): 15
+  Hoffman constant H (estimator): 22.102556
+
+Spiked rho=0.3:
+  n=200, d=400, s=15, lambda=0.1
+  Active set size (estimator): 17
+  Hoffman constant H (estimator): 44.577652
+
+Spiked rho=0.7:
+  n=200, d=400, s=15, lambda=0.1
+  Active set size (estimator): 15
+  Hoffman constant H (estimator): 51.918373
+
+--------------------------------------------------------------------------------
+Summary:
+--------------------------------------------------------------------------------
+
+Gaussian RIP:
+  Bound satisfied: 7/7 trials (100.0%)
+  Average slack (estimator H): 106.292x
+
+Spiked rho=0.3:
+  Bound satisfied: 7/7 trials (100.0%)
+  Average slack (estimator H): 165.430x
+
+Spiked rho=0.7:
+  Bound satisfied: 7/7 trials (100.0%)
+  Average slack (estimator H): 126.352x
+
+================================================================================
+Part 2: Cross-Validation Fold Perturbations
+================================================================================
+
+Gaussian:
+  Full active set size: 20
+  Hoffman constant: 41.375262
+
+Spiked rho=0.5:
+  Full active set size: 20
+  Hoffman constant: 99.224849
+
+Spiked rho=0.8:
+  Full active set size: 22
+  Hoffman constant: 98.142798
+
+--------------------------------------------------------------------------------
+Summary:
+--------------------------------------------------------------------------------
+
+Gaussian:
+  Same active set: 10.0%
+  Avg Jaccard: 0.944
+  Bound satisfied: 100.0%
+  Avg slack (same active): 37.837x
+
+Spiked rho=0.5:
+  Same active set: 0.0%
+  Avg Jaccard: 0.813
+  Bound satisfied: 100.0%
+
+Spiked rho=0.8:
+  Same active set: 0.0%
+  Avg Jaccard: 0.868
+  Bound satisfied: 100.0%
+
+Saved: cv_fold_perturbations.png
+
+================================================================================
+Part 3: Real Data Validation
+================================================================================
+
+Dataset: California Housing
+  Samples n: 1000
+  Features d: 8
+  Lambda: 0.1
+  Active set size: 3
+  Hoffman constant H: 13.941712
+
+  CV Fold Stability:
+    CV pairs tested: 10
+    Avg slack: 13.66x
+    Bound satisfied: 10/10
+
+  Bootstrap Stability:
+    Bootstrap pairs: 45
+    Avg slack: 13.60x
+
+Saved: real_data_validation.png
+
+================================================================================
+All experiments completed!
+Results saved to: ./results/06_selection_stability/
+================================================================================
+
+================================================================================
+KEY FINDINGS:
+================================================================================
+
+Part 1 (Controlled Noise):
+  When active sets match:
+    - Bound satisfied: 100.0% of trials
+    - Average slack: 137.63x
+
+Part 2 (CV Folds):
+  When active sets match:
+    - Bound satisfied: 100.0% of trials
+    - Average slack: 37.84x
+
+Part 3 (CV Folds on Real Data):
+  CV fold stability:
+    - Avg slack: 13.66x
+  Bootstrap stability:

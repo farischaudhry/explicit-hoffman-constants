@@ -70,3 +70,13 @@ Describes leverage scores as a diagnostic for feature selection stability on reg
 Demonstrates that $h_j = \frac{1}{n}\|P_{\mathcal{A}} a_j\|^2$ for inactive features $j \notin \mathcal{A}$ predicts cross-validation stability. High leverage indicates features confounded with the active set, leading to inconsistent selection across folds.
 
 If a feature has a low leverage, then it also cannot contribute much to the interaction norm. Hence these features are not causing any optimization pathologies.
+
+### 06: Hoffman Stability Bound Validation
+
+Empirical validation of the Robinson-Lipschitz stability bound for LASSO solutions:
+$$
+\|\hat{\beta}(y) - \hat{\beta}(y')\| \leq H(\hat{\mathcal{A}}) \times \|(1/n)A^T(y - y')\|_2
+$$
+where y is the the original response vector, and A hat is it's true active set. The perturbed response y' can differ in various ways (noise addition, CV fold removal, etc).
+
+The Hoffman bound is a valid worst-case guarantee that holds empirically on both synthetic and real datasets. This bound is not tight: the slack reflects the gap between worst-case adversarial perturbations (what the bound protects against) and typical random perturbations (what occurs in practice).

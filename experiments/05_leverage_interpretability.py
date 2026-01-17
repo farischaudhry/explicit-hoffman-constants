@@ -16,7 +16,7 @@ Use cases:
 - Debugging unstable feature selection across CV folds
 - Identifying when adding dimensions hurts (inactive noise with high leverage)
 
-Datasets are found/added from: https://www.openml.org/
+Datasets are found at and can be added from: https://www.openml.org/
 """
 
 import logging 
@@ -54,25 +54,58 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Experiment parameters
-N_FOLDS = 5  # For stability testing
+N_FOLDS = 5 
+
+# Datasets to test (name, max_samples, task_type)
+DATASETS = [
+    ('madelon', 50, 'classification'),  # n=50, d=500 (moderate-dim)
+    ('arcene', 200, 'classification'),  # n=200, d=10000 (very high-dim)
+]
 
 
-def load_dataset(dataset_name: str, n_samples: int = None):
+def load_dataset(dataset_name: str, n_samples: int = None, task_type: str = 'classification'):
     """
     Load dataset for supervised learning task.
     
-    Both MADELON and ARCENE are binary classification datasets.
-    We use the ground truth labels for LASSO feature selection.
+    Supports both classification and regression from OpenML.
     """
     logger.info(f'Loading {dataset_name}')
     
-    data = fetch_openml(dataset_name, version=1, parser='auto')
-    X = data.data.values if hasattr(data.data, 'values') else data.data
-    y = data.target.values if hasattr(data.target, 'values') else data.target
+    try:
+        data = fetch_openml(dataset_name, version=1, parser='auto')
+        X = data.data.values if hasattr(data.data, 'values') else data.data
+        y = data.target.values if hasattr(data.target, 'values') else data.target
+    except Exception as e:
+        logger.warning(f'  Failed to load {dataset_name}: {e}')
+        return None
     
-    # Convert to binary 0/1 for regression
-    if y.dtype == 'object' or len(np.unique(y)) == 2:
-        y = (y == np.unique(y)[0]).astype(float)
+    # Handle classification vs regression
+    if task_type == 'classification':
+        # Convert to binary 0/1
+        if y.dtype == 'object' or len(np.unique(y)) <= 10:
+            # For multi-class, use one-vs-rest for first class
+            y = (y == np.unique(y)[0]).astype(float)
+    else:
+        # For regression, convert to float
+        try:
+            y = y.astype(float)
+        except:
+            logger.warning(f'  Could not convert target to float')
+            return None
+    
+    # Remove NaN/inf from both X and y
+    try:
+        X = np.array(X, dtype=float)
+        y = np.array(y, dtype=float)
+        valid_mask = np.isfinite(X).all(axis=1) & np.isfinite(y)
+        X, y = X[valid_mask], y[valid_mask]
+        
+        if len(X) < 50:
+            logger.warning(f'  Too few valid samples: {len(X)}')
+            return None
+    except Exception as e:
+        logger.warning(f'  Data conversion failed: {e}')
+        return None
     
     # Subsample if requested
     if n_samples and len(X) > n_samples:
@@ -86,22 +119,23 @@ def load_dataset(dataset_name: str, n_samples: int = None):
     y = (y - np.mean(y)) / np.std(y)
     
     class Dataset:
-        def __init__(self, A, y):
+        def __init__(self, A, y, task):
             self.A = A
             self.y = y
+            self.task = task
     
     n, d = X.shape
-    logger.info(f'Loaded: n={n}, d={d}')
-    logger.info(f'Task: Binary classification (as regression)')
+    logger.info(f'  Loaded: n={n}, d={d}')
+    logger.info(f'  Task: {task_type}')
     
-    return Dataset(X, y)
+    return Dataset(X, y, task_type)
 
 
 def stability_validation(n_folds: int = 5):
     """
     Test hypothesis: High leverage => severe instability.
     
-    Compare MADELON vs ARCENE on real binary classification tasks.
+    Compare on different datasets and task types.
     """
     logger.info('\n' + '='*80)
     logger.info('Feature Selection Stability Analysis')
@@ -190,23 +224,18 @@ def stability_validation(n_folds: int = 5):
     # Test both datasets
     results = []
     
-    try:
-        madelon = load_dataset('madelon', n_samples=500)
-        results.append(test_stability('MADELON', madelon, n_folds=n_folds))
-    except Exception as e:
-        logger.warning(f'Failed MADELON: {e}')
-    try:
-        arcene = load_dataset('arcene', n_samples=200)
-        results.append(test_stability('ARCENE', arcene, n_folds=n_folds))
-    except Exception as e:
-        logger.warning(f'Failed ARCENE: {e}')
-    if len(results) != 2:
-        logger.warning('Could not test both datasets')
-        return
+    for dataset_name, max_samples, task_type in DATASETS:
+        try:
+            design = load_dataset(dataset_name, n_samples=max_samples, task_type=task_type)
+            if design is not None:
+                results.append(test_stability(dataset_name, design, n_folds=n_folds))
+        except Exception as e:
+            logger.warning(f'Failed {dataset_name}: {e}')
     
-    # df creation
     df = pd.DataFrame([{
         'Dataset': r['dataset'],
+        'n': r['n'],
+        'd': r['d'],
         'Mean Leverage': r['mean_leverage'],
         'High Lev Count': r['high_leverage_count'],
         'Jaccard': r['stability'],
@@ -215,7 +244,7 @@ def stability_validation(n_folds: int = 5):
     
     # Plots
     fig = plt.figure(figsize=(16, 10))
-    for idx, result in enumerate(results):
+    for idx, result in enumerate(results[:2]):  # Limit to first 2 datasets for comparison
         # Top: Selection frequency
         ax_freq = plt.subplot(2, 2, idx + 1)
         freq = result['freq']

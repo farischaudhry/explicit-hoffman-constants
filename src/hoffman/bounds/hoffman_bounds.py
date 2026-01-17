@@ -300,3 +300,44 @@ class HoffmanBoundCalculator:
             lambda_max_AA=comps.get('lambda_max_AA', np.nan),
             max_leverage_score=max_lev,
         )
+    
+    @staticmethod
+    def compute_rip_constant(A: np.ndarray, s: int, num_trials: int = 100) -> float:
+        """
+        Estimate the RIP constant δ_s for a design matrix A.
+        Use only on matricies satisfying RIP.
+        
+        Uses MC estimation: δ_s ≈ max over random s-sparse vectors of
+        |(||Av||_2^2/||v||_2^2) - 1|
+        
+        NOTE: Normalizes A to unit column norms as RIP is defined for normalized matrices.
+        
+        Parameters:
+            A: Design matrix (n × d)
+            s: Sparsity level
+            num_trials: Number of random vectors to test
+        Returns:
+            Estimated RIP constant for sparsity level δ_s
+        """
+        _, d = A.shape
+        
+        # Normalize A to have unit column norms (standard for RIP)
+        col_norms = np.linalg.norm(A, axis=0)
+        col_norms[col_norms == 0] = 1  # Avoid division by zero
+        A_normalized = A / col_norms
+        
+        delta_s = 0.0
+        for _ in range(num_trials):
+            # Generate random s-sparse vector
+            support = np.random.choice(d, size=s, replace=False)
+            v = np.zeros(d)
+            v[support] = np.random.randn(s)
+            
+            # Compute RIP violation: |(||Av||_2^2/||v||_2^2) - 1|
+            v_norm_sq = np.sum(v**2)
+            Av_norm_sq = np.sum((A_normalized @ v)**2)
+            
+            violation = abs(Av_norm_sq / v_norm_sq - 1.0)
+            delta_s = max(delta_s, violation)
+        
+        return delta_s

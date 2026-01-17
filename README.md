@@ -55,3 +55,18 @@ Investigates whether ISTA iterates stay within the restricted cone $\mathcal{C}_
 - Manifold identification times (first iteration when $\text{supp}(\beta^{(k)}) = \hat{\mathcal{A}}$).
 
 Tests both RIP and Non-RIP designs to validate that cone-conditional Hoffman bounds are practically relevant.
+
+### 04: Hoffman Bound Tightness
+
+Empirical evaluation of how tight the Hoffman constant upper bounds are across different design matrices. Compares exact $H(A)$ (computed via SVD) against theoretical upper bounds.
+
+### 05: Leverage Scores Predict Feature Selection Instability
+
+Describes leverage scores as a diagnostic for feature selection stability on regression tasks:
+
+- **MADELON** (n=500, d=500): Low leverage -> moderate stability (Jaccard ≈ 0.40)
+- **ARCENE** (n=200, d=10,000): High leverage (132 features ≥0.95) -> severe instability (Jaccard ≈ 0.28)
+
+Demonstrates that $h_j = \frac{1}{n}\|P_{\mathcal{A}} a_j\|^2$ for inactive features $j \notin \mathcal{A}$ predicts cross-validation stability. High leverage indicates features confounded with the active set, leading to inconsistent selection across folds.
+
+If a feature has a low leverage, then it also cannot contribute much to the interaction norm. Hence these features are not causing any optimization pathologies.

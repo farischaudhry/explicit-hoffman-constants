@@ -1,0 +1,33 @@
+================================================================================
+Leverage Scores Predict Feature Selection Instability
+================================================================================
+
+================================================================================
+Feature Selection Stability Analysis
+================================================================================
+Loading madelon
+Loaded: n=500, d=500
+Task: Binary classification (as regression)
+
+  MADELON
+    n=500, d=500
+    Jaccard stability:         0.398
+    Consistent features:       3/500
+    Mean inactive leverage:    0.028
+    Max inactive leverage:     0.982
+    High leverage (≥0.95):     3 (0.6%)
+Loading arcene
+Loaded: n=200, d=10000
+Task: Binary classification (as regression)
+
+  ARCENE
+    n=200, d=10000
+    Jaccard stability:         0.291
+    Consistent features:       12/10000
+    Mean inactive leverage:    0.541
+    Max inactive leverage:     1.000
+    High leverage (≥0.95):     140 (1.4%)
+
+================================================================================
+Results saved to: ./results/05_leverage_interpretability/
+================================================================================

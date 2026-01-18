@@ -1,0 +1,161 @@
+================================================================================
+Hoffman Bound Tightness Analysis
+================================================================================
+
+================================================================================
+Part 1: Spiked Model - Varying Correlation rho (with 95% CI)
+================================================================================
+Saved figure: spiked_varying_rho.png
+  Lower bound valid for all rho: True
+  Upper bound valid for all rho: True
+  Average tightness (upper/lower): 7.17x
+  Tightest at rho=0.00 (ratio=1.74x)
+  Loosest at rho=0.95 (ratio=268.05x)
+
+================================================================================
+Part 2: Leverage-Based Interaction Bound Tightness (with 95% CI)
+================================================================================
+
+Gaussian:
+  ||G_AcA||_2 (true)             = 1.6896 ± [1.6142, 1.7752]
+  sqrt(λ_max) * sqrt(Σh_j)       = 5.1609 ± [4.9293, 5.3108]
+  δ_{2s} * α * (1+√s) (RIP)    = 2.9289 ± [2.0512, 4.1654]
+  ||G_AcA||_F (Frobenius)        = 4.4127 ± [4.3430, 4.5096]
+  Decomposition:
+    λ_max(G_AA)                  = 1.3676 ± [1.2754, 1.4488]
+    Σh_j (alignment)             = 19.4838 ± [18.7725, 20.2902]
+    Max h_j                      = 0.1356 ± [0.1152, 0.1613]
+    δ_{2s} (RIP constant)       = 0.2346 ± [0.1643, 0.3336]
+  Tightness Ratios:
+    Leverage / True              = 3.0556 ± 0.0692
+    RIP / True                   = 1.7356 ± 0.3674
+    Frobenius / True             = 2.6133 ± 0.0666
+  Bound validity:
+    Leverage: 100.0% of trials
+    RIP: 100.0% of trials
+
+Rademacher:
+  ||G_AcA||_2 (true)             = 1.6925 ± [1.5931, 1.7815]
+  sqrt(λ_max) * sqrt(Σh_j)       = 5.1498 ± [4.9478, 5.3509]
+  δ_{2s} * α * (1+√s) (RIP)    = 2.8262 ± [2.3151, 3.6887]
+  ||G_AcA||_F (Frobenius)        = 4.4140 ± [4.3186, 4.5026]
+  Decomposition:
+    λ_max(G_AA)                  = 1.3614 ± [1.2737, 1.4517]
+    Σh_j (alignment)             = 19.4889 ± [18.6385, 20.2506]
+    Max h_j                      = 0.1375 ± [0.1179, 0.1656]
+    δ_{2s} (RIP constant)       = 0.2263 ± [0.1854, 0.2954]
+  Tightness Ratios:
+    Leverage / True              = 3.0443 ± 0.0739
+    RIP / True                   = 1.6731 ± 0.2574
+    Frobenius / True             = 2.6100 ± 0.0695
+  Bound validity:
+    Leverage: 100.0% of trials
+    RIP: 100.0% of trials
+
+Partial DCT:
+  ||G_AcA||_2 (true)             = 0.4999 ± [0.4996, 0.5000]
+  sqrt(λ_max) * sqrt(Σh_j)       = 1.7633 ± [1.7366, 1.7978]
+  δ_{2s} * α * (1+√s) (RIP)    = 1.9934 ± [1.5841, 2.4097]
+  ||G_AcA||_F (Frobenius)        = 1.5619 ± [1.5533, 1.5688]
+  Decomposition:
+    λ_max(G_AA)                  = 0.6230 ± [0.5985, 0.6451]
+    Σh_j (alignment)             = 4.9915 ± [4.8863, 5.0995]
+    Max h_j                      = 0.0377 ± [0.0308, 0.0506]
+    δ_{2s} (RIP constant)       = 0.1596 ± [0.1269, 0.1930]
+  Tightness Ratios:
+    Leverage / True              = 3.5272 ± 0.0374
+    RIP / True                   = 3.9876 ± 0.5006
+    Frobenius / True             = 3.1243 ± 0.0097
+  Bound validity:
+    Leverage: 100.0% of trials
+    RIP: 100.0% of trials
+
+Spiked $\rho=0.3$:
+  ||G_AcA||_2 (true)             = 18.9644 ± [15.9293, 21.8464]
+  sqrt(λ_max) * sqrt(Σh_j)       = 20.2368 ± [17.2974, 22.9725]
+  δ_{2s} * α * (1+√s) (RIP)    = N/A (non-RIP design)
+  ||G_AcA||_F (Frobenius)        = 19.1921 ± [16.2433, 22.0162]
+  Decomposition:
+    λ_max(G_AA)                  = 3.7396 ± [3.2033, 4.1340]
+    Σh_j (alignment)             = 109.5709 ± [93.4296, 128.2472]
+    Max h_j                      = 0.4246 ± [0.3712, 0.4715]
+  Tightness Ratios:
+    Leverage / True              = 1.0679 ± 0.0097
+    Frobenius / True             = 1.0123 ± 0.0032
+  Bound validity:
+    Leverage: 100.0% of trials
+
+Spiked $\rho=0.7$:
+  ||G_AcA||_2 (true)             = 43.5063 ± [40.7374, 45.2800]
+  sqrt(λ_max) * sqrt(Σh_j)       = 43.9897 ± [41.2626, 45.7460]
+  δ_{2s} * α * (1+√s) (RIP)    = N/A (non-RIP design)
+  ||G_AcA||_F (Frobenius)        = 43.5250 ± [40.7628, 45.2946]
+  Decomposition:
+    λ_max(G_AA)                  = 7.2756 ± [6.8745, 7.5846]
+    Σh_j (alignment)             = 265.9838 ± [248.0899, 277.6855]
+    Max h_j                      = 0.7653 ± [0.7248, 0.8011]
+  Tightness Ratios:
+    Leverage / True              = 1.0111 ± 0.0011
+    Frobenius / True             = 1.0004 ± 0.0001
+  Bound validity:
+    Leverage: 100.0% of trials
+
+Spiked $\rho=0.9$:
+  ||G_AcA||_2 (true)             = 56.1730 ± [55.2318, 57.0940]
+  sqrt(λ_max) * sqrt(Σh_j)       = 56.3288 ± [55.4171, 57.2223]
+  δ_{2s} * α * (1+√s) (RIP)    = N/A (non-RIP design)
+  ||G_AcA||_F (Frobenius)        = 56.1746 ± [55.2339, 57.0951]
+  Decomposition:
+    λ_max(G_AA)                  = 9.0907 ± [8.9441, 9.2281]
+    Σh_j (alignment)             = 349.0303 ± [342.4463, 355.0165]
+    Max h_j                      = 0.9236 ± [0.9115, 0.9331]
+  Tightness Ratios:
+    Leverage / True              = 1.0028 ± 0.0003
+    Frobenius / True             = 1.0000 ± 0.0000
+  Bound validity:
+    Leverage: 100.0% of trials
+
+  Saved figure: leverage_rip_bound_comparison.png
+
+================================================================================
+Part 3: Many Design Comparison
+================================================================================
+  Saved: many_design_bars.png
+
+Design                    | H(A)     | Upper/H  | Weyl/H   | ||G_AcA||  | Leverage Bd 
+-----------------------------------------------------------------------------------------------
+Orthonormal               | 5.00     | 1.00     | 1.00     | 0.00       | 0.00        
+Partial DCT               | 8.52     | 1.38     | inf      | 0.50       | 2.17        
+Gaussian                  | 10.03    | 1.70     | inf      | 1.69       | 6.05        
+Rademacher                | 10.10    | 1.71     | inf      | 1.70       | 6.29        
+AR1-Stochastic ρ=0.5      | 11.41    | 1.91     | inf      | 2.18       | 7.48        
+AR1-Stochastic ρ=0.9      | 19.42    | 2.87     | inf      | 5.03       | 14.86       
+Block-Diagonal            | 14.54    | 3.39     | inf      | 3.48       | 11.00       
+Toeplitz ρ=0.9            | 26.08    | 10.37    | inf      | 5.27       | 16.29       
+Spiked ρ=0.3              | 29.54    | 10.84    | inf      | 28.82      | 30.52       
+Spiked ρ=0.5              | 30.77    | 20.42    | inf      | 45.28      | 46.58       
+Spiked ρ=0.7              | 31.80    | 61.53    | inf      | 69.16      | 69.80       
+Spiked ρ=0.9              | 32.04    | 229.55   | inf      | 85.10      | 85.31       
+
+Tightest bounds: Orthonormal (ratio=1.00×)
+Loosest bounds:  Spiked ρ=0.9 (ratio=229.55×)
+Average tightness: 28.89×
+Median tightness:  3.13×
+
+Leverage-Based Interaction Bound Analysis:
+  Designs where leverage bound >= spectral norm: 12/12
+  Average slack (leverage/spectral): 2.584×
+
+================================================================================
+Part 4: Dimension Scaling (fixed n, varying d)
+================================================================================
+  Saved figure: dimension_scaling.png
+
+================================================================================
+Part 5: Sparsity Scaling
+================================================================================
+  Saved figure: sparsity_scaling.png
+
+================================================================================
+All experiments completed. Results saved to: ./results/04_hoffman_bound_tightness/
+================================================================================

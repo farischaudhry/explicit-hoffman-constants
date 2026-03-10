@@ -562,7 +562,8 @@ def part_3_real_data_validation():
     
     max_val = max(df_cv['bound'].max(), df_cv['actual_diff'].max()) * 1.1
     ax.plot([0, max_val], [0, max_val], 'k--', linewidth=2, alpha=0.5, label='y=x (tight)')
-    
+    s = len(active_full)
+    ax.plot([0, max_val], [0, np.sqrt(s) * max_val/np.sqrt(n)], 'r--', linewidth=2, alpha=0.5, label='Avg Case Bound (√s/√n)')
     ax.set_xlabel('Predicted Bound')
     ax.set_ylabel('Actual $\\|\\beta_i - \\beta_j\\|$')
     ax.set_title('CV Fold Stability', fontweight='bold')
@@ -578,6 +579,8 @@ def part_3_real_data_validation():
     
     max_val = max(df_boot['bound'].max(), df_boot['actual'].max()) * 1.1
     ax.plot([0, max_val], [0, max_val], 'k--', linewidth=2, alpha=0.5, label='y=x (tight)')
+    s = len(active_full)
+    ax.plot([0, max_val], [0, np.sqrt(s) * max_val/np.sqrt(n)], 'r--', linewidth=2, alpha=0.5, label='Avg Case Bound (√s/√n)')
     ax.set_xlabel('Predicted Bound')
     ax.set_ylabel('Actual $\\|\\beta_i - \\beta_j\\|$')
     ax.set_title('Bootstrap Stability', fontweight='bold')

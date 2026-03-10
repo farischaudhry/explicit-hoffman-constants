@@ -39,11 +39,11 @@ Manifold identified: iteration 831
 % iterations with cone ratio ≤ 1: 100.0%
 % iterations with cone ratio ≤ 3: 100.0%
 
-Analyzing: Spiked ρ=0.9 (Non-RIP)
+Analyzing: Spiked ρ=0.7 (Non-RIP)
 ----------------------------------------------------------------------
-Final cone ratio: 0.748224
-Mean (last 1000): 0.836289
-Max over trajectory: 0.973306
+Final cone ratio: 0.050362
+Mean (last 1000): 0.096846
+Max over trajectory: 0.452475
 Manifold NOT identified within 2000 iterations
 % iterations with cone ratio ≤ 1: 100.0%
 % iterations with cone ratio ≤ 3: 100.0%
@@ -58,14 +58,14 @@ Manifold identified: iteration 68
 % iterations with cone ratio ≤ 1: 100.0%
 % iterations with cone ratio ≤ 3: 100.0%
 
-Analyzing: AR1 ρ=0.9 (Non-RIP)
+Analyzing: AR1 ρ=0.7 (Non-RIP)
 ----------------------------------------------------------------------
-Manifold identified at iteration 1144
+Manifold identified at iteration 161
 Final cone ratio: 0.000000
-Mean (last 1000): 0.002714
-Max over trajectory: 0.786712
-Manifold identified: iteration 1144
-% iterations with cone ratio ≤ 1: 100.0%
+Mean (last 1000): 0.000000
+Max over trajectory: 1.094066
+Manifold identified: iteration 161
+% iterations with cone ratio ≤ 1: 99.0%
 % iterations with cone ratio ≤ 3: 100.0%
 
 Analyzing: PowerLaw decay=1.0 (Non-RIP)
@@ -84,8 +84,8 @@ Gaussian (RIP)                          : iteration    23
 Rademacher (RIP)                        : iteration    45
 Uniform Subgaussian (RIP)               : iteration    34
 Spiked ρ=0.3 (Non-RIP)                  : iteration   831
-Spiked ρ=0.9 (Non-RIP)                  : NOT IDENTIFIED within 2000 iterations
+Spiked ρ=0.7 (Non-RIP)                  : NOT IDENTIFIED within 2000 iterations
 AR1 ρ=0.5 (Non-RIP)                     : iteration    68
-AR1 ρ=0.9 (Non-RIP)                     : iteration  1144
+AR1 ρ=0.7 (Non-RIP)                     : iteration   161
 PowerLaw decay=1.0 (Non-RIP)            : NOT IDENTIFIED within 2000 iterations
 ======================================================================

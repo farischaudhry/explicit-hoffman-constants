@@ -136,7 +136,8 @@ def plot_trajectory_analysis(results_dict, true_sparsity):
     # Plot cone ratio over time
     ax1 = fig.add_subplot(gs[0, :])
     for name, res in results_dict.items():
-        ax1.semilogy(res['cone_ratios'], label=name, color=color_map[name], 
+        iterations = range(1, len(res['cone_ratios']))
+        ax1.semilogy(iterations, res['cone_ratios'][1:], label=name, color=color_map[name], 
                     alpha=0.7, linewidth=2, linestyle='-' if '(RIP)' in name else '--')
     
     ax1.axhline(1.0, color='black', linestyle=':', linewidth=2, 
@@ -146,7 +147,7 @@ def plot_trajectory_analysis(results_dict, true_sparsity):
     
     ax1.set_xlabel('Iteration k')
     ax1.set_ylabel('Cone Ratio: $\\|\\Delta_{\\hat{\\mathcal{A}}^c}\\|_1 / \\|\\Delta_{\\hat{\\mathcal{A}}}\\|_1$')
-    ax1.set_title('Trajectory Cone Containment: Do ISTA iterates stay in $\\mathcal{C}_\\alpha(\\hat{\\mathcal{A}})$?')
+    ax1.set_title('Trajectory Cone Containment')
     ax1.legend(loc='upper right', ncol=2, bbox_to_anchor=(1, 1))
     ax1.grid(True, alpha=0.3)
     ax1.set_ylim([1e-6, 1e2])
@@ -155,7 +156,8 @@ def plot_trajectory_analysis(results_dict, true_sparsity):
     ax2 = fig.add_subplot(gs[1, 0])
     
     for name, res in results_dict.items():
-        ax2.plot(res['active_set_sizes'], color=color_map[name], 
+        iterations = range(1, len(res['active_set_sizes']))
+        ax2.plot(iterations, res['active_set_sizes'][1:], color=color_map[name], 
                 alpha=0.7, linewidth=2)
     
     # True sparsity line
@@ -172,7 +174,8 @@ def plot_trajectory_analysis(results_dict, true_sparsity):
     ax3 = fig.add_subplot(gs[1, 1])
     
     for name, res in results_dict.items():
-        ax3.plot(res['active_set_jaccard'], color=color_map[name],
+        iterations = range(1, len(res['active_set_jaccard']))
+        ax3.plot(iterations, res['active_set_jaccard'][1:], color=color_map[name],
                 alpha=0.7, linewidth=2)
     
     ax3.set_xlabel('Iteration k')
@@ -195,9 +198,9 @@ def main():
         
         # Non-RIP Designs
         ('Spiked ρ=0.3 (Non-RIP)', DesignFactory.spiked(N, D, S, rho=0.3)),
-        ('Spiked ρ=0.9 (Non-RIP)', DesignFactory.spiked(N, D, S, rho=0.9)),
+        ('Spiked ρ=0.7 (Non-RIP)', DesignFactory.spiked(N, D, S, rho=0.7)),
         ('AR1 ρ=0.5 (Non-RIP)', DesignFactory.ar1_stochastic(N, D, S, rho=0.5)),
-        ('AR1 ρ=0.9 (Non-RIP)', DesignFactory.ar1_stochastic(N, D, S, rho=0.9)),
+        ('AR1 ρ=0.7 (Non-RIP)', DesignFactory.ar1_stochastic(N, D, S, rho=0.7)),
         ('PowerLaw decay=1.0 (Non-RIP)', DesignFactory.power_law(N, D, S, decay=1.0)),
     ]
     

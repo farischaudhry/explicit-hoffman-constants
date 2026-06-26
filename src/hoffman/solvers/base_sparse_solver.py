@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 import numpy as np
+from typing import Any
 
 from hoffman.designs.design_matrix import DesignMatrix
 
@@ -16,11 +17,11 @@ class ManifoldMetrics:
     beta: np.ndarray
     residual: float
     
-    # Structural Manifold Info
+    # Structural manifold information
     # For LASSO: set[int] (non-zero indices)
-    active_constraints: any 
+    active_constraints: Any 
     
-    # Hoffman-Relevant Geometry
+    # Hoffman-relevant geometry
     min_eig: float  # Curvature of f restricted to the manifold
     interaction: float  # Leakage to inactive constraints (||G_AcA||)
     dual_violation: float  # Margin to subdifferential boundary (max |s_Ac|)
@@ -47,7 +48,7 @@ class SolverProgress:
         return np.array([m.objective for m in self.history])
 
     @property
-    def manifold_path(self) -> list:
+    def manifold_path(self) -> list[Any]:
         return [m.active_constraints for m in self.history]
     
     @property
@@ -61,9 +62,9 @@ class BaseSparseSolver(ABC):
     
     This composite form encompasses:
     - LASSO (K=I, g=l1)
-    - Elastic Net (f includes l2)
+    - Elastic net (f includes l2)
     - Adaptive LASSO (weights in g=l1)
-    - Graph Fused Lasso (K=Incidence, g=l1)
+    - Graph fused LASSO (K=Incidence, g=l1)
     """
     def __init__(self, design: DesignMatrix, lambdas: dict[str, float], y: np.ndarray = None, beta_hat: np.ndarray = None):
         self.design = design
@@ -81,12 +82,12 @@ class BaseSparseSolver(ABC):
         pass
 
     @abstractmethod
-    def _get_active_set(self, beta: np.ndarray) -> any:
+    def _get_active_set(self, beta: np.ndarray) -> Any:
         """Identifies binding constraints (the face of the polyhedron)."""
         pass
 
     @abstractmethod
-    def _compute_geometric_metrics(self, beta: np.ndarray) -> dict[str, any]:
+    def _compute_geometric_metrics(self, beta: np.ndarray) -> dict[str, Any]:
         """Returns a dictionary of Hoffman-relevant geometric metrics."""
         pass
 

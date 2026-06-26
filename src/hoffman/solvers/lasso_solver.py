@@ -27,22 +27,22 @@ class LassoSolver(BaseSparseSolver):
 
     def _compute_geometric_metrics(self, beta: np.ndarray) -> dict[str, any]:
         """
-        Computes (kappa, interaction, dual_violation).
-        - kappa: lambda_min of the active Gram block.
+        Computes (active curvature, interaction, dual_violation).
+        - active curvature: lambda_min of the active Gram block.
         - interaction: spectral norm of the inactive-active Gram block.
         - dual_violation: max absolute subgradient of inactive variables.
         """
         active_idx = sorted(list(self._get_active_set(beta)))
         inactive_idx = [i for i in range(self.design.d) if i not in active_idx]
         
-        # Curvature of the identified manifold (kappa)
+        # Curvature of the identified manifold
         min_eig = np.nan
         if active_idx:
             G_AA = self.G[np.ix_(active_idx, active_idx)]
             # We use eigvalsh for symmetric matrices
             min_eig = np.linalg.eigvalsh(G_AA).min()
             
-        # Interaction (Off-manifold leakage)
+        # Interaction
         interaction = 0.0
         if active_idx and inactive_idx:
             G_AcA = self.G[np.ix_(inactive_idx, active_idx)]
@@ -75,7 +75,7 @@ class LassoSolver(BaseSparseSolver):
 
 class ISTALassoSolver(LassoSolver):
     """
-    Iterative Shrinkage-Thresholding Algorithm (ISTA) for LASSO.
+    ISTA for LASSO.
     """
     def solve(self, n_iters: int, start_beta: np.ndarray = None) -> SolverProgress:
         beta = np.zeros(self.design.d) if start_beta is None else start_beta.copy()
@@ -86,7 +86,6 @@ class ISTALassoSolver(LassoSolver):
         progress = SolverProgress()
 
         for k in range(n_iters):
-            # Compute current metrics BEFORE the update
             metrics_dict = self._compute_geometric_metrics(beta)
             
             # Gradient step on f(beta)
@@ -108,7 +107,6 @@ class ISTALassoSolver(LassoSolver):
                 active_constraints=self._get_active_set(beta),
                 **metrics_dict
             ))
-            
             beta = beta_next
 
         return progress
@@ -116,7 +114,7 @@ class ISTALassoSolver(LassoSolver):
 
 class FISTALassoSolver(LassoSolver):
     """
-    Fast Iterative Shrinkage-Thresholding Algorithm (FISTA) for LASSO.
+    FISTA for LASSO.
     Includes Nesterov acceleration (momentum).
     """
     def solve(self, n_iters: int, start_beta: np.ndarray = None) -> SolverProgress:
@@ -135,8 +133,10 @@ class FISTALassoSolver(LassoSolver):
             metrics_dict = self._compute_geometric_metrics(beta)
             
             # Nesterov Momentum Step
+            # Compute the next t value and use it for the momentum weight
+            t_next = (1.0 + np.sqrt(1.0 + 4.0 * t**2)) / 2.0
+            momentum_weight = (t - 1.0) / t_next
             # y_k is the search point incorporating momentum
-            momentum_weight = (t - 1.0) / (t + 1.0) # Or (t_prev - 1) / t_next
             y_k = beta + momentum_weight * (beta - beta_prev)
             
             # Gradient step on the smooth part at the search point y_k
@@ -145,7 +145,7 @@ class FISTALassoSolver(LassoSolver):
             # Proximal step (Soft-thresholding)
             beta_next = soft_threshold(y_k - step * grad, self.lam * step)
             
-            # Record Metrics
+            # Record metrics
             # Residual is calculated relative to the mapping from y_k
             residual = np.linalg.norm((y_k - beta_next) / step)
             
@@ -161,7 +161,6 @@ class FISTALassoSolver(LassoSolver):
             # Update for next iteration
             beta_prev = beta.copy()
             beta = beta_next
-            t_next = (1.0 + np.sqrt(1.0 + 4.0 * t**2)) / 2.0
             t = t_next
 
         return progress

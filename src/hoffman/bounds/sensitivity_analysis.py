@@ -16,7 +16,7 @@ class SensitivityAnalysisMetrics:
 
 class SensitivityAnalysis:
     """
-    Analyzes how the LASSO solution fluctuates under small perturbations 
+    Analyzes how a solution fluctuates under small perturbations 
     of the input data. High fluctuations correlate with high Hoffman constant.
     """
     @staticmethod

@@ -69,9 +69,17 @@ class ElasticNetSolver(BaseSparseSolver, ABC):
             # Threshold to avoid division by zero
             cone_ratio = err_inactive / err_active if err_active > 1e-12 else 0.0
             
+        # Calculate eigenvalues (max eig = spectral norm of active Gram block)
+        max_eig = np.nan
+        if active_idx:
+            G_AA = self.G[np.ix_(active_idx, active_idx)]
+            G_AA_regularized = G_AA + self.lam2 * np.eye(len(active_idx))
+            max_eig = np.linalg.norm(G_AA_regularized, ord=2)
+
         return {
             'min_eig': min_eig,
             'interaction': interaction,
+            'max_eig': max_eig,
             'dual_violation': dual_violation,
             'cone_ratio': cone_ratio,
             'current_active_set_size': len(active_idx)

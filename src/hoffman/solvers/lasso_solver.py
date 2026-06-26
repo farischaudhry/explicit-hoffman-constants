@@ -53,8 +53,8 @@ class LassoSolver(BaseSparseSolver, ABC):
         # grad = (1/n)A^T(Ab - y)
         dual_violation = 0.0
         if inactive_idx:
+            # Subgradient check: grad = (1/n)A^T(Ab - y)
             grad_full = (1/self.design.n) * self.design.A.T @ (self.design.A @ beta - self.y)
-            # Normalised by lambda to check the [-1, 1] boundary
             dual_violation = np.max(np.abs(grad_full[inactive_idx])) / self.lam
             
         cone_ratio = 0.0
@@ -62,17 +62,23 @@ class LassoSolver(BaseSparseSolver, ABC):
             delta = beta - self.beta_hat
             err_active = np.linalg.norm(delta[self.hat_support], 1)
             err_inactive = np.linalg.norm(delta[~self.hat_support], 1)
-            # Threshold to avoid division by zero
             cone_ratio = err_inactive / err_active if err_active > 1e-12 else 0.0
+
+        # Calculate eigenvalues (max eig = spectral norm of active Gram block)
+        max_eig = np.nan
+        if active_idx:
+            G_AA = self.G[np.ix_(active_idx, active_idx)]
+            max_eig = np.linalg.norm(G_AA, ord=2)
             
         return {
             'min_eig': min_eig,
             'interaction': interaction,
+            'max_eig': max_eig,
             'dual_violation': dual_violation,
             'cone_ratio': cone_ratio,
             'current_active_set_size': len(active_idx)
-        }   
-    
+        }
+
 
 class ISTALassoSolver(LassoSolver):
     """
@@ -160,8 +166,6 @@ class FISTALassoSolver(LassoSolver):
             ))
             
             # Update for next iteration
-            beta_prev = beta.copy()
-            beta = beta_next
-            t = t_next
+            beta_prev, beta, t = beta.copy(), beta_next, t_next
 
         return progress

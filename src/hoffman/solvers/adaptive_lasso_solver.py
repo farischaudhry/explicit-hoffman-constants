@@ -62,10 +62,17 @@ class AdaptiveLassoSolver(BaseSparseSolver, ABC):
             err_active = np.linalg.norm(delta[self.hat_support], 1)
             err_inactive = np.linalg.norm(delta[~self.hat_support], 1)
             cone_ratio = err_inactive / err_active if err_active > 1e-12 else 0.0
-            
+        
+        # Calculate eigenvalues (max eig = spectral norm of active Gram block)
+        max_eig = np.nan
+        if active_idx:
+            G_AA = self.G[np.ix_(active_idx, active_idx)]
+            max_eig = np.linalg.norm(G_AA, ord=2)
+        
         return {
             'min_eig': min_eig,
             'interaction': interaction,
+            'max_eig': max_eig,
             'dual_violation': dual_violation,
             'cone_ratio': cone_ratio,
             'current_active_set_size': len(active_idx)

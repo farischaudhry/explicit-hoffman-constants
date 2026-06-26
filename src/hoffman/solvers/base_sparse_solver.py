@@ -20,13 +20,6 @@ class ManifoldMetrics:
     # Structural manifold information
     # For LASSO: set[int] (non-zero indices)
     active_constraints: Any 
-    
-    # Hoffman constants
-    local_affine_hoffman_constant: float  
-    dimension_free_lower_bound: float
-    dimension_free_upper_bound: float
-    l_inf_hoffman_bound: float
-    l_1_hoffman_bound: float
 
     # Hoffman-relevant geometry
     min_eig: float  # Minimum eigenvalue of the active Gram block

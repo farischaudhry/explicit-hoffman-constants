@@ -21,8 +21,16 @@ class ManifoldMetrics:
     # For LASSO: set[int] (non-zero indices)
     active_constraints: Any 
     
+    # Hoffman constants
+    local_affine_hoffman_constant: float  
+    dimension_free_lower_bound: float
+    dimension_free_upper_bound: float
+    l_inf_hoffman_bound: float
+    l_1_hoffman_bound: float
+
     # Hoffman-relevant geometry
-    min_eig: float  # Curvature of f restricted to the manifold
+    min_eig: float  # Minimum eigenvalue of the active Gram block
+    max_eig: float  # Maximum eigenvalue of the active Gram block
     interaction: float  # Leakage to inactive constraints (||G_AcA||)
     dual_violation: float  # Margin to subdifferential boundary (max |s_Ac|)
     current_active_set_size: int  # Size of active set at this iteration (|A|)

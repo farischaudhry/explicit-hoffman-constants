@@ -1,10 +1,11 @@
 import numpy as np
+from abc import ABC
 
 from hoffman.solvers.base_sparse_solver import BaseSparseSolver, SolverProgress, ManifoldMetrics
 from hoffman.utils.math_ops import soft_threshold
 
 
-class LassoSolver(BaseSparseSolver):
+class LassoSolver(BaseSparseSolver, ABC):
     """
     Generic umbrella class for the LASSO problem: 
     min (1/2n)||y - Ab||^2 + lambda||b||_1.

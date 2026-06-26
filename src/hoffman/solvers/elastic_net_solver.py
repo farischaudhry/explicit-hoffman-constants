@@ -1,10 +1,11 @@
 import numpy as np
+from abc import ABC
 
 from hoffman.solvers.base_sparse_solver import BaseSparseSolver, SolverProgress, ManifoldMetrics
 from hoffman.utils.math_ops import soft_threshold
 
 
-class ElasticNetSolver(BaseSparseSolver):
+class ElasticNetSolver(BaseSparseSolver, ABC):
     """
     Generic umbrella class for the Elastic Net problem:
     min (1/2n)||y - A beta||^2 + lambda1||beta||_1 + (lambda2/2)||beta||_2^2.

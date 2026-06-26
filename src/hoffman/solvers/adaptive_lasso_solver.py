@@ -1,11 +1,12 @@
 import numpy as np
 from typing import Any
+from abc import ABC
 
 from hoffman.solvers.base_sparse_solver import BaseSparseSolver, SolverProgress, ManifoldMetrics
 from hoffman.utils.math_ops import soft_threshold
 
 
-class AdaptiveLassoSolver(BaseSparseSolver):
+class AdaptiveLassoSolver(BaseSparseSolver, ABC):
     """
     Generic class for the adaptive LASSO problem: 
     min (1/2n)||y - Ab||^2 + lambda * sum(w_j * |b_j|).

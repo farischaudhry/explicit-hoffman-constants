@@ -1,10 +1,11 @@
 import numpy as np
+from abc import ABC
 
 from hoffman.solvers.base_sparse_solver import BaseSparseSolver, SolverProgress, ManifoldMetrics
 from hoffman.utils.math_ops import soft_threshold
 
 
-class AdaptiveElasticNetSolver(BaseSparseSolver):
+class AdaptiveElasticNetSolver(BaseSparseSolver, ABC):
     """
     Generic class for the adaptive elastic netproblem: 
     min (1/2n)||y - Ab||^2 + lambda1 * sum(w_j * |b_j|) + (lambda2/2)||b||_2^2.

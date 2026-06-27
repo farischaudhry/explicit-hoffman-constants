@@ -1,6 +1,8 @@
 import numpy as np
 from abc import ABC
 
+from sklearn.linear_model import Ridge
+
 from hoffman.solvers.base_sparse_solver import BaseSparseSolver, SolverProgress, ManifoldMetrics
 from hoffman.utils.math_ops import soft_threshold
 
@@ -18,6 +20,17 @@ class AdaptiveElasticNetSolver(BaseSparseSolver, ABC):
         
         if len(self.weights) != self.design.d:
             raise ValueError("Length of weights array must match dimension d.")
+
+    @staticmethod
+    def compute_initial_weights(A: np.ndarray, y: np.ndarray, gamma: float = 1.0, eps: float = 1e-5) -> np.ndarray:
+        """
+        Computes weights for the adaptive penalty using a Ridge regression initial estimator.
+        Weights are normalized to average to 1 to preserve the scale of lambda.
+        """
+        ridge = Ridge(alpha=1.0, fit_intercept=False)
+        ridge.fit(A, y)
+        weights = 1.0 / (np.abs(ridge.coef_) ** gamma + eps)
+        return weights / np.mean(weights)
 
     def objective(self, beta: np.ndarray) -> float:
         resid = self.design.A @ beta - self.y

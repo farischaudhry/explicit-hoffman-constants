@@ -39,7 +39,13 @@ LAMBDA_2 = 0.05
 MAX_ITERS = 10000
 RHOS = [0.0, 0.05, 0.1, 0.3, 0.5, 0.9, 0.95]
 
-def run_spiked_convergence(solver_class, solver_name, out_dir):
+
+def build_spiked_designs():
+    """Generate one design per rho so every solver shares the same problems."""
+    return {rho: DesignFactory.spiked(n=N, d=D, s=S, rho=rho) for rho in RHOS}
+
+
+def run_spiked_convergence(solver_class, solver_name, out_dir, designs):
     """
     Runs the convergence benchmark across varying rho values for a given solver.
     """
@@ -51,8 +57,8 @@ def run_spiked_convergence(solver_class, solver_name, out_dir):
         name = f'Spiked rho={rho}'
         logger.info(f'Benchmarking {solver_name} on {name}')    
 
-        # Generate design
-        design = DesignFactory.spiked(n=N, d=D, s=S, rho=rho)
+        # Reuse the same pre-generated design across all solvers for this rho.
+        design = designs[rho]
         y = design.A @ design.true_beta
         
         # Configure solver arguments dynamically based on the class requirements
@@ -113,6 +119,8 @@ def run_spiked_convergence(solver_class, solver_name, out_dir):
 
 
 if __name__ == "__main__":
+    shared_designs = build_spiked_designs()
+
     EXPERIMENTS = {
         'LASSO': ISTALassoSolver,
         'Elastic Net': ISTAElasticNetSolver,
@@ -120,6 +128,6 @@ if __name__ == "__main__":
         'Adaptive Elastic Net': ISTAAdaptiveElasticNetSolver,
     }
     
-    base_out = './results/spiked_model_convergence/'
+    base_out = './results/hoffman/spiked_model_convergence/'
     for name, s_class in EXPERIMENTS.items():
-        run_spiked_convergence(s_class, name, os.path.join(base_out, name))
+            run_spiked_convergence(s_class, name, os.path.join(base_out, name), shared_designs)

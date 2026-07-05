@@ -9,7 +9,9 @@ __pycache__/
 # VSCode
 .vscode/
 
+# Scratch files
 experiments/test*.py
+scratch/*
 
 # Distribution / packaging
 .Python

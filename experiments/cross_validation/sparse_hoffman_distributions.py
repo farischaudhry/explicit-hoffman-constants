@@ -141,5 +141,5 @@ def run_distribution_analysis(n=300, d=600, s_list=[5, 10, 15, 20, 30], n_mc_sam
 
 if __name__ == '__main__':
     # Sweep through varying sparsity levels
-    s_list_to_test = [5]
-    run_distribution_analysis(n=300, d=600, s_list=s_list_to_test, n_mc_samples=100, lambda_val=0.1)
+    s_list_to_test = [2, 4, 8, 16, 32, 64]
+    run_distribution_analysis(n=300, d=600, s_list=s_list_to_test, n_mc_samples=2000, lambda_val=0.1)

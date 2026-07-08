@@ -120,7 +120,7 @@ def run_distribution_analysis(n=300, d=600, s_list=[5, 10, 15, 20, 30], n_mc_sam
             props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
             ax.text(0.95, 0.50, textstr, transform=ax.transAxes, fontsize=12,
                     verticalalignment='center', horizontalalignment='right', bbox=props)
-            ax.set_title(f'Empirical Distribution of $H^2$ - {name.replace("_", " ")} (s={current_s})')
+            ax.set_title(f'Empirical Distribution of $H^2$ - {name.replace("_", " ")} ($s$={current_s})')
             ax.set_xlabel('Exact Local Affine Hoffman Constant')
             ax.set_ylabel('Density')
             ax.legend(loc='upper right')

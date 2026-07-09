@@ -70,8 +70,6 @@ def generate_design_matrix(name: str, n: int, d: int, s: int):
     """
     if name == 'Gaussian':
         return DesignFactory.gaussian(n, d, s).A
-    elif name == 'Spiked_rho0.3':
-        return DesignFactory.spiked(n, d, s, rho=0.3).A
     elif name == 'Spiked_rho0.5':
         return DesignFactory.spiked(n, d, s, rho=0.5).A
     elif name == 'Spiked_rho0.8':
@@ -80,10 +78,8 @@ def generate_design_matrix(name: str, n: int, d: int, s: int):
         raise ValueError(f"Unknown design {name}")
 
 
-def run_comprehensive_sweep(n_vals, d_vals, s_vals, design_names, n_mc=20, lambda_val=0.1):
+def run_bound_tightness_sweep(n_vals, d_vals, s_vals, design_names, n_mc=20, lambda_val=0.1):
     """Sweeps over hyperparameter grids, sampling multiple matrices per cell."""
-    logger.info("Starting Comprehensive Bound Sweep...")
-    
     all_results = []
     
     for n in n_vals:
@@ -153,16 +149,17 @@ def run_comprehensive_sweep(n_vals, d_vals, s_vals, design_names, n_mc=20, lambd
         for _, row in df_final.iterrows():
             h2_str = f"{row['H2_Upper/Exact_Median']:<15} [{row['H2_Upper/Exact_Min']:<15}, {row['H2_Upper/Exact_Max']:<15}]"
             hinf_str = f"{row['Hinf_Upper/Exact_Median']:<15} [{row['Hinf_Upper/Exact_Min']:<15}, {row['Hinf_Upper/Exact_Max']:<15}]"
-            f.write(f"{row['Design']:<15} | n={row['n']:<3} d={row['d']:<4} s={row['s']:<2} | H2 U/E: {h2_str} | Hinf U/E: {hinf_str}\n")
+            h1_str = f"{row['H1_Upper/Exact_Median']:<15} [{row['H1_Upper/Exact_Min']:<15}, {row['H1_Upper/Exact_Max']:<15}]"
+            f.write(f"{row['Design']:<15} | n={row['n']:<3} d={row['d']:<4} s={row['s']:<2} | H2 U/E: {h2_str} | Hinf U/E: {hinf_str} | H1 U/E: {h1_str}\n")
 
     return df_final
 
 
 if __name__ == '__main__':
     # Define grid. Keep MC samples relatively high to get true min/max behaviors.
-    n_values = [50, 100, 200, 400, 800, 1600, 3200]
-    d_values = [100, 200, 400, 800, 1600, 3200, 6400, 12800]
-    s_values = [5, 10, 20, 40, 80, 160]
-    design_names = ['Gaussian', 'Spiked_rho0.3', 'Spiked_rho0.5', 'Spiked_rho0.8']
+    d_values = [500, 1000, 2000]
+    n_values = [100, 200, 400]
+    s_values = [5, 10, 20, 40]
+    design_names = ['Gaussian', 'Spiked_rho0.5', 'Spiked_rho0.8']
     
-    run_comprehensive_sweep(n_values, d_values, s_values, design_names, n_mc=3)
+    run_bound_tightness_sweep(n_values, d_values, s_values, design_names, n_mc=30)

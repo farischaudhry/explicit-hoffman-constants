@@ -1,7 +1,7 @@
 """
 Demonstrates feature pruning using active-inactive cross-leverage.
 
-Fits LASSO models on some datasets (ARCENE, DEXTER, MADELON) with different
+Fits LASSO models on some datasets (e.g., ARCENE) with different
 regularization strengths and computes cross-leverage scores for inactive features.
 When cross-leverage score is high (e.g., h_j > 0.95), it indicates that the inactive feature is almost entirely
 in the span of the active features, suggesting that it can be pruned without losing much information.
@@ -13,11 +13,12 @@ would also expect that the pruned model would converge faster due to the reduced
 
 import logging
 import os
+import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.datasets import fetch_openml
+from sklearn.datasets import fetch_openml, make_regression
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Lasso
@@ -35,8 +36,11 @@ os.makedirs(FIG_DIR, exist_ok=True)
 # Configuration
 np.random.seed(0)
 set_plotting_style()
-logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.basicConfig(filename=os.path.join(OUTPUT_DIR, 'cross_leverage_diagnostic.log'), level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
+logger.addHandler(console_handler)
 
 
 def compute_cross_leverage(A: np.ndarray, active_set: np.ndarray):
@@ -68,15 +72,33 @@ def get_exact_h2(A: np.ndarray, active_set: np.ndarray, lam1: float):
 
 
 def load_openml_dataset(dataset_name: str):
-    openml_name_map = {
-        'ARCENE': 'arcene',
-        'MADELON': 'madelon',
+    if dataset_name == 'Synthetic':
+        X, y = make_regression(n_samples=100, n_features=1000, n_informative=15, noise=1.0, random_state=0)
+        y = StandardScaler().fit_transform(y.reshape(-1, 1)).flatten()
+        return X, y
+
+    openml_data_id_map = {
+        'ARCENE': 1458,
+        'DEXTER': 4136,
+        'DOROTHEA': 4137,
+        'LEUKEMIA': 1104,
     }
 
-    if dataset_name not in openml_name_map:
+    if dataset_name not in openml_data_id_map:
         raise ValueError(f"Unsupported dataset: {dataset_name}")
 
-    X, y = fetch_openml(name=openml_name_map[dataset_name], version=1, return_X_y=True, as_frame=False)
+    last_error = None
+    for attempt in range(3):
+        try:
+            X, y = fetch_openml(data_id=openml_data_id_map[dataset_name], return_X_y=True, as_frame=False)
+            break
+        except Exception as exc:
+            last_error = exc
+            if attempt < 2:
+                logger.warning(f"Retrying OpenML fetch for {dataset_name} (attempt {attempt + 2}/3)...")
+                time.sleep(2)
+    else:
+        raise last_error
 
     is_sparse_input = hasattr(X, 'toarray')
     scaler = StandardScaler(with_mean=not is_sparse_input, with_std=True)
@@ -93,8 +115,14 @@ def load_openml_dataset(dataset_name: str):
 def get_alpha_grid(dataset_name: str):
     if dataset_name == 'ARCENE':
         return [0.1, 0.5, 1.0]
-    if dataset_name == 'MADELON':
-        return [0.5, 1.0, 2.0]
+    if dataset_name == 'DEXTER':
+        return [1.0]
+    if dataset_name == 'DOROTHEA':
+        return [0.1]
+    if dataset_name == 'LEUKEMIA':
+        return [0.1, 0.5, 1.0]
+    if dataset_name == 'Synthetic':
+        return [0.01, 0.05, 0.1]
     raise ValueError(f"Unsupported dataset: {dataset_name}")
 
 
@@ -103,7 +131,7 @@ def evaluate_alpha_regime(X_scaled, y, alpha_sklearn, dataset_name):
     n, d = X_scaled.shape
     lambda_val = alpha_sklearn * n
     
-    logger.info(f"\n--- Alpha = {alpha_sklearn} ---")
+    logger.info(f"Alpha = {alpha_sklearn}")
     lasso = Lasso(alpha=alpha_sklearn, fit_intercept=False, max_iter=5000, tol=1e-4)
     lasso.fit(X_scaled, y)
     
@@ -126,7 +154,7 @@ def evaluate_alpha_regime(X_scaled, y, alpha_sklearn, dataset_name):
     
     leverage_scores = compute_cross_leverage(X_scaled, baseline_active_set)
     
-    thresholds = [0.99, 0.95, 0.90, 0.85, 0.80, 0.70, 0.60, 0.50]
+    thresholds = [0.99, 0.95, 0.90, 0.80, 0.70, 0.60, 0.50, 0.40, 0.30, 0.20, 0.10]
     results = []
 
     logger.info(
@@ -223,7 +251,7 @@ def plot_comparative_distribution(leverage_dict, s_dict, dataset_name):
     """Plots the distribution of cross-leverage scores for different alphas."""
     fig, ax = plt.subplots(figsize=(10, 6))
     
-    colors = {0.01: 'lightcoral', 0.05: 'lightgray', 0.1: 'darkred', 0.5: 'steelblue', 1.0: 'darkgreen', 2.0: 'purple'}
+    colors = {0.001: 'yellow', 0.005: 'lightblue', 0.01: 'darkblue', 0.05: 'darkgreen', 0.1: 'darkred', 0.5: 'steelblue', 1.0: 'orange'}
     bins = np.linspace(0.0, 1.0, 51)
     
     for alpha, scores in leverage_dict.items():
@@ -240,21 +268,21 @@ def plot_comparative_distribution(leverage_dict, s_dict, dataset_name):
         sns.histplot(
             score_vals,
             bins=bins,
-            stat='density',
+            stat='probability',
             element='step',
             fill=True,
             alpha=0.25,
             color=colors[alpha],
-            label=r'$\alpha=%.1f$ (Active $s=%d$)' % (alpha, s_base),
+            label=r'$\alpha=%.3f$ (Active $s=%d$)' % (alpha, s_base),
             ax=ax,
         )
         
         # Add a rug plot to show where the actual features sit
         sns.rugplot(score_vals, color=colors[alpha], alpha=0.1, ax=ax)
 
-    ax.set_title(f'Distribution of Inactive Cross-Leverage Scores ({dataset_name})\n(Subspace Exhaustion vs. Sparse Subspace)')
-    ax.set_xlabel(r'Cross-Leverage Score $h_j = \frac{1}{n} ||\Pi_{\mathcal{A}} a_j||_2^2$')
-    ax.set_ylabel('Density')
+    ax.set_title(f'Distribution of Inactive Cross-Leverage Scores ({dataset_name})')
+    ax.set_xlabel('Cross-Leverage Score')
+    ax.set_ylabel('Probability')
     ax.set_xlim(0, 1.05)
     ax.legend(loc='upper left')
     ax.grid(True, alpha=0.3)
@@ -265,11 +293,11 @@ def plot_comparative_distribution(leverage_dict, s_dict, dataset_name):
 
 
 def run_full_experiment():
-    datasets_to_test = ['ARCENE']
+    datasets_to_test = ['Synthetic', 'ARCENE']
     all_results = []
 
     for dataset_name in datasets_to_test:
-        logger.info(f"Loading {dataset_name}...")
+        logger.info(f"Loading {dataset_name}.")
         try:
             X_scaled, y = load_openml_dataset(dataset_name)
         except Exception as e:

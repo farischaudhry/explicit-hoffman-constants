@@ -1,0 +1,93 @@
+
+Analyzing: Gaussian (RIP)
+----------------------------------------------------------------------
+Manifold identified at iteration 10
+Final cone ratio: 0.000000
+Mean (last 1000): 0.000000
+Max over trajectory: 1.289682
+Manifold identified: iteration 10
+% iterations with cone ratio ≤ 1: 99.8%
+% iterations with cone ratio ≤ 3: 100.0%
+
+Analyzing: Rademacher (RIP)
+----------------------------------------------------------------------
+Manifold identified at iteration 13
+Final cone ratio: 0.000000
+Mean (last 1000): 0.000000
+Max over trajectory: 1.062675
+Manifold identified: iteration 13
+% iterations with cone ratio ≤ 1: 99.9%
+% iterations with cone ratio ≤ 3: 100.0%
+
+Analyzing: Uniform Subgaussian (RIP)
+----------------------------------------------------------------------
+Manifold identified at iteration 11
+Final cone ratio: 0.000000
+Mean (last 1000): 0.000000
+Max over trajectory: 1.111333
+Manifold identified: iteration 11
+% iterations with cone ratio ≤ 1: 99.9%
+% iterations with cone ratio ≤ 3: 100.0%
+
+Analyzing: Spiked ρ=0.3 (Non-RIP)
+----------------------------------------------------------------------
+Manifold identified at iteration 78
+Final cone ratio: 0.000000
+Mean (last 1000): 0.000000
+Max over trajectory: 0.759917
+Manifold identified: iteration 78
+% iterations with cone ratio ≤ 1: 100.0%
+% iterations with cone ratio ≤ 3: 100.0%
+
+Analyzing: Spiked ρ=0.7 (Non-RIP)
+----------------------------------------------------------------------
+Manifold identified at iteration 154
+Final cone ratio: 0.000000
+Mean (last 1000): 0.000000
+Max over trajectory: 0.452729
+Manifold identified: iteration 154
+% iterations with cone ratio ≤ 1: 100.0%
+% iterations with cone ratio ≤ 3: 100.0%
+
+Analyzing: AR1 ρ=0.5 (Non-RIP)
+----------------------------------------------------------------------
+Manifold identified at iteration 18
+Final cone ratio: 0.000000
+Mean (last 1000): 0.000000
+Max over trajectory: 0.970586
+Manifold identified: iteration 18
+% iterations with cone ratio ≤ 1: 100.0%
+% iterations with cone ratio ≤ 3: 100.0%
+
+Analyzing: AR1 ρ=0.7 (Non-RIP)
+----------------------------------------------------------------------
+Manifold identified at iteration 27
+Final cone ratio: 0.000000
+Mean (last 1000): 0.000000
+Max over trajectory: 1.186301
+Manifold identified: iteration 27
+% iterations with cone ratio ≤ 1: 99.4%
+% iterations with cone ratio ≤ 3: 100.0%
+
+Analyzing: PowerLaw decay=1.0 (Non-RIP)
+----------------------------------------------------------------------
+Manifold identified at iteration 640
+Final cone ratio: 0.000000
+Mean (last 1000): 0.000074
+Max over trajectory: 0.988152
+Manifold identified: iteration 640
+% iterations with cone ratio ≤ 1: 100.0%
+% iterations with cone ratio ≤ 3: 100.0%
+
+======================================================================
+MANIFOLD IDENTIFICATION TIMES:
+----------------------------------------------------------------------
+Gaussian (RIP)                          : iteration    10
+Rademacher (RIP)                        : iteration    13
+Uniform Subgaussian (RIP)               : iteration    11
+Spiked ρ=0.3 (Non-RIP)                  : iteration    78
+Spiked ρ=0.7 (Non-RIP)                  : iteration   154
+AR1 ρ=0.5 (Non-RIP)                     : iteration    18
+AR1 ρ=0.7 (Non-RIP)                     : iteration    27
+PowerLaw decay=1.0 (Non-RIP)            : iteration   640
+======================================================================

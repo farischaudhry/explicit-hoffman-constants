@@ -273,7 +273,7 @@ def plot_comparative_distribution(leverage_dict, s_dict, dataset_name):
             fill=True,
             alpha=0.25,
             color=colors[alpha],
-            label=r'$\alpha=%.3f$ (Active $s=%d$)' % (alpha, s_base),
+            label=r'$\lambda=%.3f$ (Active $s=%d$)' % (alpha, s_base),
             ax=ax,
         )
         
@@ -282,7 +282,7 @@ def plot_comparative_distribution(leverage_dict, s_dict, dataset_name):
 
     ax.set_title(f'Distribution of Inactive Cross-Leverage Scores ({dataset_name})')
     ax.set_xlabel('Cross-Leverage Score')
-    ax.set_ylabel('Probability')
+    ax.set_ylabel('Probability Density')
     ax.set_xlim(0, 1.05)
     ax.legend(loc='upper left')
     ax.grid(True, alpha=0.3)

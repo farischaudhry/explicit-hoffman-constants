@@ -144,7 +144,7 @@ def visualize():
         if i == 0:
             pivot = df.pivot(index='l2_r', columns='l1_r', values='recovery')
             ax.pcolormesh(l1_r, l2_r, pivot.values, cmap='Greys_r', shading='auto')
-            ax.plot(theo['stat_l1']/Xi, theo['l2_range']/Xi, color='orange', linestyle='-', linewidth=2.5, label='Coupled $\lambda_{\mathrm{stat}}(\lambda_2)$ boundary')
+            ax.plot(theo['stat_l1']/Xi, theo['l2_range']/Xi, color='orange', linestyle='-', linewidth=2.5, label='Coupled $\lambda_{\mathrm{stat}}(\lambda_{{n, 2}})$ boundary')
         else:
             pivot = df.pivot(index='l2_r', columns='l1_r', values='h_emp')
             im = ax.pcolormesh(l1_r, l2_r, pivot.values, shading='auto', 

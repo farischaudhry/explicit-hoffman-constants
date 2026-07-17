@@ -116,33 +116,36 @@ def run_scaling_experiment(n=200, initial_d=400, max_d=10000, step=100, s=10, la
         df_design = pd.DataFrame(design_results)
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
         
-        # --- Left Plot: Norm Comparisons ---
-        ax1.plot(df_design['d'], df_design['exact_h2'], 'k-', marker='o', alpha=0.7, label='Exact $H^2$')
-        ax1.plot(df_design['d'], df_design['upper_h2'], 'r--', marker='s', alpha=0.7, label='Upper $H^2$')
+        # Left Plot: Norm Comparisons
+        ax1.plot(df_design['d'], df_design['exact_h2'], 'k-', marker='o', alpha=0.7, label='Exact $H^{2,2}$')
+        ax1.plot(df_design['d'], df_design['upper_h2'], 'r--', marker='s', alpha=0.7, label='Upper $H^{2,2}$')
         
-        ax1.plot(df_design['d'], df_design['exact_h1'], 'c-', marker='d', alpha=0.7, label='Exact $H^1$')
-        ax1.plot(df_design['d'], df_design['upper_h1'], 'b--', marker='^', alpha=0.7, label='Upper $H^1$')
+        ax1.plot(df_design['d'], df_design['exact_h1'], 'c-', marker='d', alpha=0.7, label='Exact $H^{1,1}$')
+        ax1.plot(df_design['d'], df_design['upper_h1'], 'b--', marker='^', alpha=0.7, label='Upper $H^{1,1}$')
         
-        ax1.plot(df_design['d'], df_design['exact_hinf'], 'y-', marker='x', alpha=0.7, label='Exact $H^\infty$')
-        ax1.plot(df_design['d'], df_design['upper_hinf'], 'm--', marker='+', alpha=0.7, label='Upper $H^\infty$')
+        ax1.plot(df_design['d'], df_design['exact_hinf'], 'y-', marker='x', alpha=0.7, label='Exact $H^{\infty, \infty}$')
+        ax1.plot(df_design['d'], df_design['upper_hinf'], 'm--', marker='+', alpha=0.7, label='Upper $H^{\infty, \infty}$')
         
         ax1.set_yscale('log')
-        ax1.set_xlabel('Ambient Dimension ($d$)')
+        ax1.set_xlabel('Ambient Dimension $d$')
         ax1.set_ylabel('Hoffman Constant or Bound (log scale)')
         ax1.set_title(f'Norm Comparisons - {name.replace("_", " ")}')
         ax1.grid(True, alpha=0.3)
         ax1.legend(loc='upper left', fontsize='small')
         
-        # --- Right Plot: H2 Decomposition ---
-        ax2.plot(df_design['d'], df_design['exact_h2'], 'k-', marker='o', alpha=0.7, label='Exact $H^2$')
-        ax2.plot(df_design['d'], df_design['upper_h2'], 'r--', marker='s', alpha=0.7, label='Upper $H^2$')
+        # Right Plot: H^2,2 Decomposition 
+        ax2.plot(df_design['d'], df_design['exact_h2'], 'k-', marker='o', alpha=0.7, label='Exact $H^{2,2}$')
+        ax2.plot(df_design['d'], df_design['upper_h2'], 'r--', marker='s', alpha=0.7, label='Upper $H^{2,2}$')
         ax2.plot(df_design['d'], df_design['interaction_norm'], 'b:', marker='v', linewidth=2, alpha=0.7, label='Active-Inactive Interaction')
         ax2.plot(df_design['d'], df_design['active_curvature'], 'c-.', marker='>', linewidth=2, alpha=0.7, label='Active Curvature')
+        ax2.plot(df_design['d'], 1/lambda_val * np.ones_like(df_design['d']), 'g--', linewidth=2, alpha=0.7, label='1/$\lambda$')
         
         # ax2.set_yscale('log')
-        ax2.set_xlabel('Ambient Dimension ($d$)')
+        # ax2.set_xscale('log')
+        ax2.set_xlabel('Ambient Dimension $d$')
         ax2.set_ylabel('Value')
-        ax2.set_title(f'$H^2$ Geometric Decomposition - {name.replace("_", " ")}')
+        clean_name = name.replace('_', ' ')
+        ax2.set_title(f'$H^{{2,2}}$ Geometric Decomposition - {clean_name}')
         ax2.grid(True, alpha=0.3)
         ax2.legend(loc='upper left', fontsize='small')
         

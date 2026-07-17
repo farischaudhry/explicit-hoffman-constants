@@ -273,7 +273,7 @@ def plot_comparative_distribution(leverage_dict, s_dict, dataset_name):
             fill=True,
             alpha=0.25,
             color=colors[alpha],
-            label=r'$\lambda=%.3f$ (Active $s=%d$)' % (alpha, s_base),
+            label=r'$\lambda_n=%.3f$ (Active $s=%d$)' % (alpha, s_base),
             ax=ax,
         )
         

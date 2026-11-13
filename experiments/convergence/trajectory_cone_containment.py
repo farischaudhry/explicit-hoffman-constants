@@ -139,9 +139,9 @@ def plot_trajectory_analysis(results_dict, true_sparsity):
     ax1.axhline(3.0, color='gray', linestyle=':', linewidth=2, 
                label='Relaxed cone (α=3)')
     
-    ax1.set_xlabel('Iteration k')
-    ax1.set_ylabel('Cone Ratio: $\\|\\Delta_{\\hat{\\mathcal{A}}^c}\\|_1 / \\|\\Delta_{\\hat{\\mathcal{A}}}\\|_1$')
-    ax1.set_title('Trajectory Cone Containment')
+    ax1.set_xlabel('Iteration $k$')
+    ax1.set_ylabel('Cone Ratio: $\|h_{\widehat S^c}^{(k)}\|1/\|h{\widehat S}^{(k)}\|_1$')
+    ax1.set_title('Empirical Optimizer-Support Cone Containment')
     ax1.legend(loc='upper right', ncol=2, bbox_to_anchor=(1, 1))
     ax1.grid(True, alpha=0.3)
     ax1.set_ylim([1e-6, 1e2])
@@ -158,9 +158,9 @@ def plot_trajectory_analysis(results_dict, true_sparsity):
     ax2.axhline(true_sparsity, color='black', 
                linestyle='--', linewidth=2, label=f'True sparsity (s={true_sparsity})')
     
-    ax2.set_xlabel('Iteration k')
-    ax2.set_ylabel('Active Set Size: $|\\mathcal{A}^{(k)}|$')
-    ax2.set_title('Active Set Cardinality Evolution')
+    ax2.set_xlabel('Iteration $k$')
+    ax2.set_ylabel(r'Active Set Size: $|\operatorname{supp}(\beta^{(k)})|$')
+    ax2.set_title('Support Cardinality Evolution')
     ax2.legend(loc='best')
     ax2.grid(True, alpha=0.3)
     
@@ -173,8 +173,8 @@ def plot_trajectory_analysis(results_dict, true_sparsity):
                 alpha=0.7, linewidth=2)
     
     ax3.set_xlabel('Iteration k')
-    ax3.set_ylabel('Jaccard Sim.: $|\\mathcal{A}^{(k)} \\cap \\hat{\\mathcal{A}}| / |\\mathcal{A}^{(k)} \\cup \\hat{\\mathcal{A}}|$')
-    ax3.set_title('Active Set Recovery Quality')
+    ax3.set_ylabel(r'Jaccard Sim.: $|S_k \cap \widehat S| / |S_k \cup \widehat S|$')
+    ax3.set_title('Optimizer Support Identification')
     ax3.grid(True, alpha=0.3)
     ax3.set_ylim([0, 1.1])
     

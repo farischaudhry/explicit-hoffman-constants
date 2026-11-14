@@ -186,16 +186,16 @@ def main():
     """Run trajectory analysis on specified designs."""
     designs_to_test = [
         # RIP Designs
-        ('Gaussian (RIP)', DesignFactory.gaussian(N, D, S)),
-        ('Rademacher (RIP)', DesignFactory.rademacher(N, D, S)),
-        ('Uniform Subgaussian (RIP)', DesignFactory.uniform_subgaussian(N, D, S)),
+        ('Gaussian', DesignFactory.gaussian(N, D, S)),
+        ('Rademacher', DesignFactory.rademacher(N, D, S)),
+        ('Uniform subgaussian', DesignFactory.uniform_subgaussian(N, D, S)),
         
         # Non-RIP Designs
-        ('Spiked ρ=0.3 (Non-RIP)', DesignFactory.spiked(N, D, S, rho=0.3)),
-        ('Spiked ρ=0.7 (Non-RIP)', DesignFactory.spiked(N, D, S, rho=0.7)),
-        ('AR1 ρ=0.5 (Non-RIP)', DesignFactory.ar1_stochastic(N, D, S, rho=0.5)),
-        ('AR1 ρ=0.7 (Non-RIP)', DesignFactory.ar1_stochastic(N, D, S, rho=0.7)),
-        ('PowerLaw decay=1.0 (Non-RIP)', DesignFactory.power_law(N, D, S, decay=1.0)),
+        ('Spiked ρ=0.3', DesignFactory.spiked(N, D, S, rho=0.3)),
+        ('Spiked ρ=0.7', DesignFactory.spiked(N, D, S, rho=0.7)),
+        ('AR1 ρ=0.5', DesignFactory.ar1_stochastic(N, D, S, rho=0.5)),
+        ('AR1 ρ=0.7', DesignFactory.ar1_stochastic(N, D, S, rho=0.7)),
+        ('Power law decay=1.0', DesignFactory.power_law(N, D, S, decay=1.0)),
     ]
     
     results_dict = {}
